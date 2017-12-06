@@ -107,11 +107,15 @@ int printFileNames(char *pathName, int offset){
 
 	//Directory entry pointer variable
 	struct dirent *dentry;
+	//Structure stat to see if the entry is a regular file
+	struct stat fstat;
 
 	//Loop through all files (and subdirectories) in the directory
-	while (dentry = readdir(dir) != NULL) {
-		//If it is a file (not . or ..)
-		if (strchr(dentry->d_name, '.') != NULL) {
+	while ((dentry = readdir(dir)) != NULL) {
+
+		stat(dentry->d_name, &fstat);
+		//If it is a regular file
+		if (S_ISREG(fstat.st_mode) != 0){
 			//If it is not a hidden file (doesn't start with a '.'), print the file name
 			if ((dentry->d_name)[0] != '.') {
 				printf("%s", dentry->d_name);
@@ -141,10 +145,18 @@ int printMoreInfo(char *fileName){
 		return 0;
 	}
 
+	//Print appropriate number of tabs first (tab is length 8)
+	if (strlen(fileName) >= 16)
+		printf("\t");
+	else if (strlen(fileName) >= 8)
+		printf("\t\t");
+	else
+		printf("\t\t\t");
+
 	//Print the file size (in bytes)
-	printf(": SIZE--%d", fstat.st_size);
+	printf("%d", fstat.st_size);
 	//Print the permissions (octal int)
-	printf(", PERMISSIONS--");
+	printf("\t");
 	printf((S_ISDIR(fstat.st_mode)) ? "d" : "-");
 	printf((fstat.st_mode & S_IRUSR) ? "r" : "-");
 	printf((fstat.st_mode & S_IWUSR) ? "w" : "-");
@@ -156,7 +168,7 @@ int printMoreInfo(char *fileName){
 	printf((fstat.st_mode & S_IWOTH) ? "w" : "-");
 	printf((fstat.st_mode & S_IXOTH) ? "x" : "-");
 	//Print the inode number (decimal int)
-	printf(", INODE--%d", fstat.st_ino);
+	printf("\t%d", fstat.st_ino);
 	
 }
 
@@ -164,5 +176,25 @@ int printMoreInfo(char *fileName){
 //Return value: 1 if successful, 0 if unsuccessful
 int printHiddenFileNames(char *pathName) {
 	printf("Printing hidden file names with path name %s\n", pathName);
+
+	//DIR pointer to store the directory
+	DIR *dir = opendir(pathName);
+
+	//If the given directory cannot be opened, print error message and return 0
+	if (dir == NULL) {
+		fprintf(stderr, "Error: Directory %s cannot be opened.\n", pathName);
+		return 0;
+	}
+
+	//Directory entry pointer variable
+	struct dirent *dentry;
+	
+	//Loop through all files (and subdirectories) in the directory
+	while ((dentry = readdir(dir)) != NULL) {
+		//If it is a hidden file (starts with a '.'), print the file name
+		if ((dentry->d_name)[0] == '.') 
+			printf("%s\n", dentry->d_name);
+	}
+
 	return 1;
 }
