@@ -94,8 +94,6 @@ int actOnFlag(char *flag, char *pathName){
 //If the offset is 0, only the file names printed,
 //Otherwise (if it is 1), more info will be printed per line using printMoreInfo(FILE *fP)
 int printFileNames(char *pathName, int offset){
-	printf("Printing file names with offset %d and path name %s\n", offset, pathName);
-
 	//DIR pointer to store the directory
 	DIR *dir = opendir(pathName);
 
@@ -175,8 +173,6 @@ int printMoreInfo(char *fileName){
 //Function to print only the names of the hidden files in the directory
 //Return value: 1 if successful, 0 if unsuccessful
 int printHiddenFileNames(char *pathName) {
-	printf("Printing hidden file names with path name %s\n", pathName);
-
 	//DIR pointer to store the directory
 	DIR *dir = opendir(pathName);
 
