@@ -12,6 +12,7 @@ Main function for shell program
 #include <sys/types.h> /* for pid_t */
 #include <sys/wait.h> /* for wait */
 #include "shellFunctions.c"
+
 //#include "input.c"
 
 int main(int argc, char * argv[]) {
@@ -28,11 +29,11 @@ int main(int argc, char * argv[]) {
 			//if strcmp(argv[0], "list")
 			if(strcmp(argv[0], "list") == 0){
 				printf("This is the list function\n");
-				execute(argv);
+				checkListArgs(2, argv);
 			}
 			else if(strcmp(command, "create") == 0){
 				printf("This is the create function\n");
-				//fork function
+				checkCreateArgs(3, argv);
 			}
 			else if(strcmp(command, "wd") == 0){
 				printf("This is the wd function\n");
@@ -54,36 +55,42 @@ int main(int argc, char * argv[]) {
 		}
 	}
 
-/*
+
 	if(argc == 2){
-		fileName = argv[2];
+		fileName = argv[1];
+		printf("%s\n", argv[1]);
    		//If given file cannot be opened, print error message and stop
    		if((fp = fopen(fileName, "r+"))== NULL){
      	fprintf(stderr, "Error: File %s cannot be opened.\n", fileName);
     	return 0;
   		}
-  		while(fp != EOF){
+		while(1){
 			printf("$> ");
-			command = getLine(fp);
-
-			if(strcmp(command, "list") == 0){
+			fgets(command, sizeof(char) * 1024, fp);
+			parse(command, argv);
+			//save command location to argv
+			//if strcmp(argv[0], "list")
+			if(strcmp(argv[0], "list") == 0){
 				printf("This is the list function\n");
-				system("./list");
+				checkListArgs(2, argv);
 			}
 			else if(strcmp(command, "create") == 0){
 				printf("This is the create function\n");
-				//fork function
+				checkCreateArgs(3, argv);
 			}
 			else if(strcmp(command, "wd") == 0){
 				printf("This is the wd function\n");
 				wd();
 			}
-			else if(strcmp(command, "chwd") == 0){
-				printf("This is the chwd function\n");
-				chwd("/users/danielhug");
+			else if(strcmp(argv[0], "chwd") == 0){
+				printf("This is the chwd function %s \n", argv[1]);
+
+				chwd(argv[1]);
 			}
 			else if(strcmp(command, "quit") == 0){
 				quit();
+				return 0;
+				
 			}
 			else{
 				fprintf(stderr, "Error: Invalid Command (%s).\n", command);
@@ -91,7 +98,7 @@ int main(int argc, char * argv[]) {
 		}
 	}
 
-*/
+
 }
 
 
