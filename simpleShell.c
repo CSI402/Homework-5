@@ -64,7 +64,7 @@ int main(int argc, char * argv[]) {
      	fprintf(stderr, "Error: File %s cannot be opened.\n", fileName);
     	return 0;
   		}
-		while(1){
+		while(!feof(fp)){
 			printf("$> ");
 			fgets(command, sizeof(char) * 1024, fp);
 			parse(command, argv);
