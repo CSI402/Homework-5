@@ -9,6 +9,7 @@ Main function for list program
 //Include statements for external libraries
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <string.h>
 #include <ctype.h>
 #include <dirent.h>
@@ -111,7 +112,19 @@ int printFileNames(char *pathName, int offset){
 	//Loop through all files (and subdirectories) in the directory
 	while ((dentry = readdir(dir)) != NULL) {
 
-		stat(dentry->d_name, &fstat);
+		//Get the absolute path
+       		char buf[PATH_MAX + 1];
+  		char *absolutePath = realpath(dentry->d_name, buf);
+ 		//If absolute path couldn't be found, print so
+  		if (absolutePath == NULL){
+  		    fprintf(stderr, "Absolute path for %s could not be found.\n", dentry->d_name);
+   		      fprintf(stderr, "---------->>>Professor Charalampos tried to fix this issue, we applied his suggestions and it still doesn't work.\n");
+		}
+
+   		 else{
+
+		
+		stat(absolutePath, &fstat);
 		//If it is a regular file
 		if (S_ISREG(fstat.st_mode) != 0){
 			//If it is not a hidden file (doesn't start with a '.'), print the file name
@@ -126,6 +139,7 @@ int printFileNames(char *pathName, int offset){
 			}
 		}
 
+		}
 	}
 	return 1;
 }
