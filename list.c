@@ -168,6 +168,7 @@ int printMoreInfo(char *fileName){
 	//Print the inode number (decimal int)
 	printf("\t%d", fstat.st_ino);
 	
+	return 1;
 }
 
 //Function to print only the names of the hidden files in the directory
